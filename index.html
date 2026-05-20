@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>母婴AI助手 - 点淘</title>
+  <style>
+    :root {
+      --primary: #FF4D6A;
+      --primary-light: #FF8FA3;
+      --primary-bg: #FFF0F3;
+      --text-1: #222;
+      --text-2: #555;
+      --text-3: #999;
+      --bg: #F5F6F8;
+      --white: #FFF;
+      --border: #F0F0F0;
+      --green: #34C77B;
+      --green-bg: #EEFBF3;
+      --orange: #FF8C42;
+      --orange-bg: #FFF5ED;
+      --blue: #4A90E2;
+      --blue-bg: #EDF4FD;
+      --purple: #9B59B6;
+      --purple-bg: #F4ECF7;
+      --radius: 14px;
+      --shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      -webkit-font-smoothing: antialiased;
+    }
+    .app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: var(--bg); padding-bottom: 40px; }
+
+    /* === Two-Tier Navigation === */
+    .nav-header {
+      background: linear-gradient(180deg, #FFE8EE 0%, #F5F6F8 100%);
+      padding: 16px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-1);
+      padding: 0 16px 10px;
+    }
+    /* Stage Tabs (Tier 1) */
+    .stage-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 16px 8px;
+    }
+    .stage-tab {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-2);
+      background: rgba(255,255,255,0.6);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .stage-tab.active {
+      background: var(--primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(255,77,106,0.3);
+    }
+    /* Week Tabs (Tier 2) */
+    .week-tabs {
+      display: flex;
+      gap: 0;
+      padding: 6px 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      justify-content: center;
+    }
+    .week-tabs::-webkit-scrollbar { display: none; }
+    .week-tab {
+      padding: 5px 14px;
+      border-radius: 16px;
+      font-size: 12px;
+      color: var(--text-3);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .week-tab.active {
+      background: var(--white);
+      color: var(--primary);
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+
+    /* === Module 1: Baby Overview === */
+    .module-1 { padding: 0 14px; margin-top: 6px; }
+
+    .baby-overview {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 10px;
+    }
+    .overview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .overview-left { flex: 1; }
+    .overview-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+    .overview-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+    .overview-right {
+      width: 72px;
+      height: 72px;
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+    .overview-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Baby Stats */
+    .baby-stats {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px 4px;
+      background: #FAFBFC;
+      border-radius: 10px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-bottom: 3px;
+    }
+    .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .stat-unit {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 400;
+    }
+
+    /* Baby Changes */
+    .baby-changes {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 10px;
+    }
+    .changes-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 12px;
+    }
+    .changes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .change-col {
+      background: #FAFBFC;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .change-col-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .change-col-title.traits { color: var(--orange); }
+    .change-col-title.prepare { color: var(--blue); }
+    .change-item {
+      font-size: 12px;
+      color: var(--text-2);
+      padding: 5px 0;
+      border-bottom: 1px dashed var(--border);
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1.5;
+    }
+    .change-item:last-child { border-bottom: none; }
+    .change-item:hover { color: var(--primary); }
+    .change-item::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .change-col.traits-col .change-item::before { background: var(--orange); }
+    .change-col.prepare-col .change-item::before { background: var(--blue); }
+
+    /* Q&A Bar */
+    .qa-bar {
+      background: linear-gradient(135deg, #FFF5F7 0%, #FFF0F3 100%);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,77,106,0.08);
+    }
+    .qa-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .qa-text {
+      font-size: 13px;
+      color: var(--text-1);
+      font-weight: 500;
+      flex: 1;
+    }
+    .qa-search {
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+    .qa-cert {
+      font-size: 11px;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .qa-cert::before {
+      content: '✓';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--green-bg);
+      color: var(--green);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    /* === Module 2: Product Categories === */
+    .module-2 { padding: 0 14px; margin-top: 6px; }
+    .module-2-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-1);
+      padding: 10px 0 8px;
+    }
+
+    /* Category Tabs */
+    .cat-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    .cat-tab {
+      padding: 7px 14px;
+      border-radius: 18px;
+      font-size: 12px;
+      color: var(--text-2);
+      background: var(--white);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .cat-tab.active {
+      background: var(--primary-bg);
+      color: var(--primary);
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+    .cat-tab.focus {
+      animation: focusPulse 1.5s ease-in-out 2;
+    }
+    @keyframes focusPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); box-shadow: 0 0 8px rgba(255,77,106,0.3); }
+    }
+
+    /* AI Product Main */
+    .ai-product-main {
+      background: linear-gradient(135deg, #FFF5F7 0%, #FFEEF2 50%, #FFF8FA 100%);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,77,106,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-badge {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      font-size: 10px;
+      padding: 3px 10px 3px 8px;
+      border-radius: 0 0 12px 0;
+      font-weight: 600;
+    }
+    .ai-product-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .ai-product-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .ai-product-img img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+    }
+    .ai-product-info { flex: 1; }
+    .ai-product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+    .ai-product-reason {
+      font-size: 12px;
+      color: var(--primary);
+      line-height: 1.5;
+      margin-bottom: 6px;
+      background: rgba(255,77,106,0.06);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .ai-product-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .ai-product-price .original {
+      font-size: 12px;
+      color: var(--text-3);
+      text-decoration: line-through;
+      font-weight: 400;
+      margin-left: 6px;
+    }
+
+    /* Alternative Products */
+    .alt-products-title {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 8px;
+      padding-left: 2px;
+    }
+    .alt-products {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .alt-product {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .alt-product:hover { transform: translateY(-2px); }
+    .alt-product-img {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 6px;
+      background: #FAFBFC;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .alt-product-img img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+    }
+    .alt-product-name {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .alt-product-price {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Utilities */
+    .section-gap { height: 10px; }
+    .scroll-smooth { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+<div class="app scroll-smooth">
+
+  <!-- Two-Tier Navigation -->
+  <div class="nav-header">
+    <div class="nav-title">👶 宝宝成长AI助手</div>
+    <div class="stage-tabs" id="stageTabs"></div>
+    <div class="week-tabs" id="weekTabs"></div>
+  </div>
+
+  <!-- Module 1: Baby Info -->
+  <div class="module-1" id="module1"></div>
+
+  <!-- Module 2: Product Categories -->
+  <div class="module-2" id="module2"></div>
+
+</div>
+
+<script>
+// ========== DATA ==========
+const DATA = {
+  stages: [
+    { id: 's1', label: '1-3个月', weeks: ['第1周','第2周','第4周','第8周','第12周'] },
+    { id: 's2', label: '3-6个月', weeks: ['第13周','第16周','第20周','第24周'] },
+    { id: 's3', label: '6-9个月', weeks: ['第26周','第30周','第34周','第36周'] },
+    { id: 's4', label: '1岁', weeks: ['第40周','第44周','第48周','第52周'] }
+  ],
+  // Categories available per stage
+  catsPerStage: {
+    s1: ['eat','use','clothes','travel'],
+    s2: ['eat','use','clothes','travel','improve'],
+    s3: ['eat','use','clothes','travel','learn','improve'],
+    s4: ['eat','use','clothes','travel','learn','improve']
+  },
+  catLabels: {
+    eat: '宝宝吃', use: '宝宝用', clothes: '宝宝穿衣',
+    travel: '宝宝出行', learn: '宝宝学习', improve: '宝宝提升'
+  },
+  catIcons: {
+    eat: '🍼', use: '🧸', clothes: '👕',
+    travel: '🚗', learn: '📖', improve: '⭐'
+  },
+  // Weekly data
+  weeks: {
+    // Stage 1: 1-3个月
+    's1_0': {
+      overview: '宝宝刚来到这个世界，大部分时间在睡觉，开始适应子宫外的环境。',
+      stats: { weight: '3.5', height: '50.2', head: '34.8' },
+      traits: ['觅食反射强烈，饥饿时会转头找奶','每天睡眠16-18小时','皮肤可能出现新生儿黄疸','对强光有眨眼反应'],
+      prepare: ['准备新生儿奶粉（母乳不足时备用）','购入NB码纸尿裤','准备恒温水壶冲泡奶粉','新生儿包被/襁褓巾'],
+      question: '新生儿奶粉应该用多少度的水冲泡？',
+      cert: '《美国儿科学会育儿百科》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: '爱他美卓萃1段奶粉', reason: '根据您关注的有机成分偏好，这款含天然乳脂+HMO，亲近母乳配方', price: '¥328', original: '¥398', img: 'product-formula.png' },
+          alts: [
+            { name: '飞鹤星飞帆1段', price: '¥268', img: 'product-formula.png' },
+            { name: '合生元派星1段', price: '¥298', img: 'product-formula.png' },
+            { name: '美赞臣蓝臻1段', price: '¥358', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '花王妙而舒NB纸尿裤', reason: '基于宝宝体重3.5kg匹配，超薄透气芯体，专为新生儿设计', price: '¥89', original: '¥119', img: 'product-diaper.png' },
+          alts: [
+            { name: '帮宝适一级帮NB', price: '¥79', img: 'product-diaper.png' },
+            { name: '大王天使NB', price: '¥99', img: 'product-diaper.png' },
+            { name: '好奇铂金装NB', price: '¥85', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '全棉时代新生儿连体衣', reason: '100%纯棉A类面料，适合新生儿敏感肌肤', price: '¥79', original: '¥109', img: 'product-clothes.png' },
+          alts: [
+            { name: '英氏新生儿和尚服', price: '¥59', img: 'product-clothes.png' },
+            { name: '丽婴房纯棉连体衣', price: '¥69', img: 'product-clothes.png' },
+            { name: 'Purcotton包屁衣', price: '¥65', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '好孩子婴儿提篮', reason: '新生儿外出必备，符合3C安全认证，一篮多用', price: '¥499', original: '¥699', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Cybex提篮安全座椅', price: '¥899', img: 'product-stroller.png' },
+            { name: 'Maxicosi提篮', price: '¥659', img: 'product-stroller.png' },
+            { name: '宝得适婴儿提篮', price: '¥579', img: 'product-stroller.png' }
+          ]
+        }
+      }
+    },
+    's1_1': {
+      overview: '宝宝开始对人脸产生兴趣，清醒时间略增加，会短暂注视移动物体。',
+      stats: { weight: '4.0', height: '52.1', head: '35.5' },
+      traits: ['开始短暂注视人脸','手指大部分时间握拳','对突然的声响会惊跳','脐带残端可能脱落'],
+      prepare: ['黑白卡片促进视觉发育','婴儿润肤露护理肚脐周围','轻柔的安抚玩具','吸奶器（母乳妈妈备用）'],
+      question: '两周大的宝宝一天需要喂几次奶？',
+      cert: '《西尔斯亲密育儿百科》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: '美德乐丝韵翼舒悦吸奶器', reason: '您是母乳喂养妈妈，双边电动高效省时，仿生吮吸技术', price: '¥1599', original: '¥1999', img: 'product-formula.png' },
+          alts: [
+            { name: 'Spectra贝瑞克S2', price: '¥899', img: 'product-formula.png' },
+            { name: '新安怡自然顺畅', price: '¥699', img: 'product-formula.png' },
+            { name: '小白熊智妍吸奶器', price: '¥459', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '海龟爸爸黑白视觉卡', reason: '第2周宝宝开始注视人脸，黑白卡刺激视觉神经发育', price: '¥39', original: '¥59', img: 'product-diaper.png' },
+          alts: [
+            { name: 'beiens贝恩施黑白卡', price: '¥29', img: 'product-diaper.png' },
+            { name: 'Fisher-Price追视球', price: '¥49', img: 'product-diaper.png' },
+            { name: '婴儿床铃黑白款', price: '¥55', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '童泰新生儿纱布衣套装', reason: '双层纱布透气不闷，适合室内穿着', price: '¥69', original: '¥89', img: 'product-clothes.png' },
+          alts: [
+            { name: '拉比婴儿内衣套装', price: '¥59', img: 'product-clothes.png' },
+            { name: 'aqpa纯棉连体衣', price: '¥49', img: 'product-clothes.png' },
+            { name: '安奈儿新生儿礼盒', price: '¥129', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: 'Babycare婴儿背带', reason: '新生儿横抱模式，解放双手外出更方便', price: '¥259', original: '¥349', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Ergobaby新生儿背带', price: '¥899', img: 'product-stroller.png' },
+            { name: '袋鼠爸爸背带', price: '¥199', img: 'product-stroller.png' },
+            { name: 'BeBear抱抱熊背带', price: '¥169', img: 'product-stroller.png' }
+          ]
+        }
+      }
+    },
+    's1_2': {
+      overview: '满月啦！宝宝清醒时间更多，开始出现社交性微笑，颈部力量增强。',
+      stats: { weight: '4.8', height: '55.0', head: '36.8' },
+      traits: ['出现社交性微笑','俯卧时能短暂抬头','开始发出"啊""哦"元音','对彩色物体产生兴趣'],
+      prepare: ['彩色摇铃刺激视听觉','婴儿健身架练习抬头','S码纸尿裤（体重增长）','拍嗝巾/口水巾'],
+      question: '一个月的宝宝每天清醒时间有多久？',
+      cert: '《崔玉涛育儿百科》认证',
+      focusCat: 'use',
+      products: {
+        eat: {
+          main: { name: '贝亲宽口径玻璃奶瓶', reason: '配合您的混合喂养方式，仿母乳奶嘴减少乳头混淆', price: '¥98', original: '¥128', img: 'product-formula.png' },
+          alts: [
+            { name: 'Hegen奶瓶', price: '¥229', img: 'product-formula.png' },
+            { name: '世喜断奶神器奶瓶', price: '¥149', img: 'product-formula.png' },
+            { name: 'Comotomo硅胶奶瓶', price: '¥139', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '费雪脚踏钢琴健身架', reason: '宝宝开始抬头和挥动手臂，健身架促进大运动发育', price: '¥199', original: '¥289', img: 'product-diaper.png' },
+          alts: [
+            { name: '澳贝音乐健身架', price: '¥159', img: 'product-diaper.png' },
+            { name: 'Babycare健身毯', price: '¥179', img: 'product-diaper.png' },
+            { name: '谷雨婴儿健身架', price: '¥129', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: 'Carter\'s纯棉连体衣3件装', reason: '满月宝宝生长快，多件装更换方便性价比高', price: '¥119', original: '¥159', img: 'product-clothes.png' },
+          alts: [
+            { name: 'H&M婴儿连体衣套装', price: '¥99', img: 'product-clothes.png' },
+            { name: '优衣库婴儿网眼连体衣', price: '¥79', img: 'product-clothes.png' },
+            { name: 'NEXT婴儿睡袋', price: '¥129', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: 'Cybex Libelle轻便伞车', reason: '满月后外出频率增加，超轻便可登机折叠', price: '¥1399', original: '¥1799', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Babyzen YOYO2', price: '¥3499', img: 'product-stroller.png' },
+            { name: '好孩子D619推车', price: '¥599', img: 'product-stroller.png' },
+            { name: 'Silver Cross Jet', price: '¥2299', img: 'product-stroller.png' }
+          ]
+        }
+      }
+    },
+    's1_3': {
+      overview: '两个月的宝宝越来越活泼，会用眼睛追踪物体，手脚舞动频繁。',
+      stats: { weight: '5.6', height: '57.5', head: '38.0' },
+      traits: ['能追视移动物体180度','发出更多"咿咿呀呀"声','手能偶尔张开触碰物品','对妈妈的声音特别敏感'],
+      prepare: ['安抚奶嘴缓解吮吸需求','婴儿益生菌（肠绞痛预防）','防胀气奶瓶','轻柔音乐玩具'],
+      question: '两个月的宝宝肠绞痛怎么缓解？',
+      cert: '《美国儿科学会育儿百科》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: 'BioGaia益生菌滴剂', reason: '针对2月龄常见肠绞痛，罗伊氏乳杆菌专业配方', price: '¥259', original: '¥319', img: 'product-formula.png' },
+          alts: [
+            { name: '康萃乐婴儿益生菌', price: '¥219', img: 'product-formula.png' },
+            { name: '妈咪爱益生菌', price: '¥68', img: 'product-formula.png' },
+            { name: '合生元益生菌滴剂', price: '¥198', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: 'MAM安抚奶嘴0-2月', reason: '缓解非营养性吮吸需求，对称设计不影响口腔发育', price: '¥45', original: '¥65', img: 'product-diaper.png' },
+          alts: [
+            { name: 'NUK安抚奶嘴', price: '¥39', img: 'product-diaper.png' },
+            { name: '飞利浦新安怡安抚奶嘴', price: '¥35', img: 'product-diaper.png' },
+            { name: '贝亲安抚奶嘴', price: '¥29', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: 'MIKI HOUSE连体爬服', reason: '宝宝手脚活动增多，弹力面料不束缚运动', price: '¥159', original: '¥199', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Gap婴儿连体衣', price: '¥99', img: 'product-clothes.png' },
+            { name: '丽婴房弹力连体衣', price: '¥79', img: 'product-clothes.png' },
+            { name: 'Mothercare爬服', price: '¥89', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '汽车婴儿反向安全座椅', reason: '2个月后外出增多，反向安装保护颈椎安全出行', price: '¥1299', original: '¥1899', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Britax头等舱', price: '¥1699', img: 'product-stroller.png' },
+            { name: '猫头鹰妙转安全座椅', price: '¥2399', img: 'product-stroller.png' },
+            { name: 'Joie巧儿宜安全座椅', price: '¥999', img: 'product-stroller.png' }
+          ]
+        }
+      }
+    },
+    's1_4': {
+      overview: '三个月啦！宝宝已经能很好地控制头部，开始尝试翻身，笑声更加爽朗。',
+      stats: { weight: '6.4', height: '60.0', head: '39.5' },
+      traits: ['俯卧能稳定抬头45度','出声笑，能认出主要照料者','尝试翻身（从俯卧到仰卧）','手能主动抓握物品'],
+      prepare: ['翻身练习垫/爬行垫','牙胶（口欲期即将开始）','M码纸尿裤升级','便携式遮阳篷（外出用）'],
+      question: '宝宝三个月了还不会翻身正常吗？',
+      cert: '《西尔斯亲密育儿百科》认证',
+      focusCat: 'use',
+      products: {
+        eat: {
+          main: { name: '爱他美卓萃1段 800g', reason: '3月龄奶量增加，大罐装更经济，维持您一直选购的品牌', price: '¥328', original: '¥398', img: 'product-formula.png' },
+          alts: [
+            { name: '飞鹤星飞帆1段800g', price: '¥268', img: 'product-formula.png' },
+            { name: 'a2至初1段', price: '¥348', img: 'product-formula.png' },
+            { name: '佳贝艾特羊奶粉1段', price: '¥388', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: 'Parklon帕克伦爬行垫', reason: '宝宝开始翻身，加厚爬行垫提供安全缓冲空间', price: '¥299', original: '¥399', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Babycare爬行垫', price: '¥199', img: 'product-diaper.png' },
+            { name: '曼龙XPE爬行垫', price: '¥159', img: 'product-diaper.png' },
+            { name: '可优比折叠爬行垫', price: '¥229', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '英氏婴儿分体套装', reason: '3月龄活动量增大，分体式穿脱方便换尿裤', price: '¥129', original: '¥169', img: 'product-clothes.png' },
+          alts: [
+            { name: '童泰婴儿内衣套装', price: '¥79', img: 'product-clothes.png' },
+            { name: '拉比婴儿肩开套装', price: '¥89', img: 'product-clothes.png' },
+            { name: '全棉时代分体套装', price: '¥99', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: 'UPPAbaby VISTA V2婴儿车', reason: '3月龄外出更频繁，高景观大空间座舱让宝宝舒适出行', price: '¥5999', original: '¥7299', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Stokke Xplory X', price: '¥8999', img: 'product-stroller.png' },
+            { name: '好孩子天际高景观', price: '¥1999', img: 'product-stroller.png' },
+            { name: 'Silver Cross Wave', price: '¥4599', img: 'product-stroller.png' }
+          ]
+        }
+      }
+    },
+    // Stage 2: 3-6个月
+    's2_0': {
+      overview: '宝宝进入快速探索期，能熟练翻身，对周围事物充满好奇。',
+      stats: { weight: '6.8', height: '62.0', head: '40.5' },
+      traits: ['熟练翻身，尝试独坐','口欲期旺盛，什么都想啃','能准确伸手抓取物品','开始认生，偏爱熟悉面孔'],
+      prepare: ['辅食工具准备（即将添加辅食）','各类牙胶磨牙棒','围嘴/口水巾大量备用','益智抓握玩具'],
+      question: '4个月可以开始添加辅食了吗？',
+      cert: '《中国居民膳食指南(2022)》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: '嘉宝米粉1段(原味)', reason: '即将进入辅食期，铁强化米粉是第一口辅食首选', price: '¥52', original: '¥68', img: 'product-formula.png' },
+          alts: [
+            { name: '爱思贝有机米粉', price: '¥59', img: 'product-formula.png' },
+            { name: '小皮原味米粉', price: '¥49', img: 'product-formula.png' },
+            { name: '英氏铁锌钙米粉', price: '¥39', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: 'Manhattan Toy曼哈顿球', reason: '口欲期宝宝爱啃咬，食品级硅胶多触感设计', price: '¥89', original: '¥119', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Sophie la Girafe小鹿牙胶', price: '¥139', img: 'product-diaper.png' },
+            { name: 'Babycare牙胶手摇铃', price: '¥49', img: 'product-diaper.png' },
+            { name: '可优比磨牙棒', price: '¥35', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: 'Aqpa婴儿爬服纯棉', reason: '翻身期宝宝活动量大，弹力爬服方便运动', price: '¥69', original: '¥99', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Carter\'s爬行服', price: '¥79', img: 'product-clothes.png' },
+            { name: '英氏弹力连体衣', price: '¥89', img: 'product-clothes.png' },
+            { name: '童泰薄款爬服', price: '¥55', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: 'Stokke Clikk成长椅', reason: '即将添加辅食，一椅多用从婴儿用到学龄', price: '¥1399', original: '¥1699', img: 'product-stroller.png' },
+          alts: [
+            { name: '宜家ANTILOP高脚椅', price: '¥149', img: 'product-stroller.png' },
+            { name: '可优比宝宝餐椅', price: '¥399', img: 'product-stroller.png' },
+            { name: 'Pouch婴儿餐椅', price: '¥699', img: 'product-stroller.png' }
+          ]
+        },
+        improve: {
+          main: { name: '巧虎0-1岁早教套装', reason: '4月龄认知发展加速，多感官互动促进大脑发育', price: '¥199', original: '¥299', img: 'product-diaper.png' },
+          alts: [
+            { name: '年糕妈妈早教盒子', price: '¥168', img: 'product-diaper.png' },
+            { name: 'B.Toys感统玩具套装', price: '¥159', img: 'product-diaper.png' },
+            { name: '启蒙积木软胶', price: '¥79', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's2_1': {
+      overview: '宝宝开始尝试坐稳，辅食添加后味觉世界大开，咿呀学语更频繁。',
+      stats: { weight: '7.3', height: '64.5', head: '41.5' },
+      traits: ['能靠坐几秒钟','辅食期，尝试不同食材','发出"ba""ma"等音节','喜欢用手拍打和抓取'],
+      prepare: ['辅食碗勺套装','围兜/吃饭衣','手指食物模具','靠背坐垫辅助'],
+      question: '5个月宝宝辅食一天吃几次、每次多少？',
+      cert: '《崔玉涛育儿百科》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: 'BEABA辅食料理机', reason: '辅食添加关键期，蒸煮搅拌一体更高效营养保留', price: '¥899', original: '¥1199', img: 'product-formula.png' },
+          alts: [
+            { name: '小熊辅食机', price: '¥299', img: 'product-formula.png' },
+            { name: 'Babycare辅食研磨碗', price: '¥49', img: 'product-formula.png' },
+            { name: '博朗料理棒', price: '¥399', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: 'Bumkins硅胶围兜', reason: '开始吃辅食啦，防水兜底设计接住掉落食物', price: '¥69', original: '¥89', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Babybjorn围兜', price: '¥99', img: 'product-diaper.png' },
+            { name: '可优比一次性围兜', price: '¥39', img: 'product-diaper.png' },
+            { name: '十月结晶防水罩衣', price: '¥35', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '防水吃饭罩衣长袖', reason: '辅食阶段必备，全方位防脏方便清洗', price: '¥45', original: '¥65', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Babycare吃饭衣', price: '¥55', img: 'product-clothes.png' },
+            { name: '可优比防水罩衣', price: '¥39', img: 'product-clothes.png' },
+            { name: '童泰婴儿围裙', price: '¥29', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '便携折叠餐椅', reason: '外出就餐时宝宝也有专属座位，折叠便携', price: '¥159', original: '¥219', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Inglesina桌边餐椅', price: '¥499', img: 'product-stroller.png' },
+            { name: '可优比便携餐椅', price: '¥139', img: 'product-stroller.png' },
+            { name: 'Summer infant便携椅', price: '¥179', img: 'product-stroller.png' }
+          ]
+        },
+        improve: {
+          main: { name: '布书触摸书套装', reason: '5月龄抓握能力提升，多材质触摸促进触觉发育', price: '¥59', original: '¥89', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Lalababy拉拉布书', price: '¥45', img: 'product-diaper.png' },
+            { name: 'Fisher-Price布书', price: '¥39', img: 'product-diaper.png' },
+            { name: 'B.Toys触感球套装', price: '¥69', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's2_2': {
+      overview: '半岁里程碑！宝宝开始尝试扶站，可能萌出第一颗牙，辅食种类扩展。',
+      stats: { weight: '7.8', height: '66.5', head: '42.3' },
+      traits: ['可能萌出下门牙','扶着能站一会儿','辅食接受度提高','分离焦虑初现'],
+      prepare: ['指套牙刷/婴儿牙膏','围栏/防护栏保安全','更多种类辅食食材','安抚玩偶/安全感物品'],
+      question: '宝宝6个月出牙期该怎么护理？',
+      cert: '《美国儿科学会育儿百科》认证',
+      focusCat: 'use',
+      products: {
+        eat: {
+          main: { name: '嘉宝星星泡芙(多口味)', reason: '半岁宝宝可尝试手指食物，锻炼精细抓握能力', price: '¥35', original: '¥45', img: 'product-formula.png' },
+          alts: [
+            { name: '小皮有机溶豆', price: '¥32', img: 'product-formula.png' },
+            { name: '禧贝有机泡芙', price: '¥39', img: 'product-formula.png' },
+            { name: '英氏磨牙饼干', price: '¥25', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '婴儿硅胶指套牙刷套装', reason: '第一颗牙萌出，指套牙刷温和清洁新牙', price: '¥29', original: '¥45', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Babycare婴儿牙刷', price: '¥25', img: 'product-diaper.png' },
+            { name: 'Pigeon贝亲乳牙刷', price: '¥19', img: 'product-diaper.png' },
+            { name: '可么多么指套牙刷', price: '¥35', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '学步防滑地板袜', reason: '宝宝开始扶站，防滑袜保护安全不滑倒', price: '¥39', original: '¥59', img: 'product-clothes.png' },
+          alts: [
+            { name: '英氏学步袜', price: '¥29', img: 'product-clothes.png' },
+            { name: '拉比防滑袜', price: '¥25', img: 'product-clothes.png' },
+            { name: 'Mikihouse学步鞋袜', price: '¥89', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '围栏游戏围栏', reason: '会扶站了活动范围增大，围栏给宝宝安全探索空间', price: '¥399', original: '¥599', img: 'product-stroller.png' },
+          alts: [
+            { name: '曼龙游戏围栏', price: '¥349', img: 'product-stroller.png' },
+            { name: 'Babycare围栏', price: '¥459', img: 'product-stroller.png' },
+            { name: '可优比折叠围栏', price: '¥299', img: 'product-stroller.png' }
+          ]
+        },
+        improve: {
+          main: { name: '叠叠杯套装', reason: '半岁宝宝空间感发展，叠杯游戏培养因果认知', price: '¥35', original: '¥55', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Fisher-Price叠叠乐', price: '¥49', img: 'product-diaper.png' },
+            { name: '谷雨游戏桌', price: '¥129', img: 'product-diaper.png' },
+            { name: 'Hape堆叠积木', price: '¥59', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's2_3': {
+      overview: '宝宝快半岁了，爬行能力增强，对声音和语言的反应更加灵敏。',
+      stats: { weight: '8.2', height: '68.0', head: '43.0' },
+      traits: ['匍匐爬行或肚子贴地爬','对名字有反应','喜欢重复性游戏如躲猫猫','能双手各握一个玩具'],
+      prepare: ['爬行垫扩大面积','安全锁/防撞角','爬行服（护膝设计）','洗澡玩具增加乐趣'],
+      question: '6个月宝宝还不会爬需要担心吗？',
+      cert: '《西尔斯亲密育儿百科》认证',
+      focusCat: 'use',
+      products: {
+        eat: {
+          main: { name: '2段奶粉 爱他美卓萃', reason: '满6个月转2段，延续您选择的品牌系列', price: '¥318', original: '¥378', img: 'product-formula.png' },
+          alts: [
+            { name: '飞鹤星飞帆2段', price: '¥258', img: 'product-formula.png' },
+            { name: 'a2至初2段', price: '¥338', img: 'product-formula.png' },
+            { name: '合生元派星2段', price: '¥288', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '全屋安全防护套装', reason: '宝宝开始爬行活动范围大，一套搞定全屋安全防护', price: '¥89', original: '¥129', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Babycare安全锁', price: '¥39', img: 'product-diaper.png' },
+            { name: '防撞角+插座保护套装', price: '¥29', img: 'product-diaper.png' },
+            { name: '楼梯安全门栏', price: '¥149', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '婴儿护膝爬行服', reason: '匍匐爬行期，加厚膝盖保护宝宝不磨伤', price: '¥79', original: '¥109', img: 'product-clothes.png' },
+          alts: [
+            { name: '英氏爬行裤', price: '¥69', img: 'product-clothes.png' },
+            { name: 'Babycare护膝', price: '¥29', img: 'product-clothes.png' },
+            { name: '可优比爬行套装', price: '¥89', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '洗澡玩具套装', reason: '6月龄宝宝爱玩水，洗澡变成快乐游戏时光', price: '¥49', original: '¥79', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Munchkin洗澡玩具', price: '¥59', img: 'product-stroller.png' },
+            { name: '谷雨戏水玩具', price: '¥39', img: 'product-stroller.png' },
+            { name: 'Yookidoo花洒玩具', price: '¥99', img: 'product-stroller.png' }
+          ]
+        },
+        improve: {
+          main: { name: '触摸翻翻书套装', reason: '对声音敏感+认知发展，翻翻书满足探索欲', price: '¥69', original: '¥99', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Usborne偷偷看里面', price: '¥89', img: 'product-diaper.png' },
+            { name: 'DK触摸书', price: '¥59', img: 'product-diaper.png' },
+            { name: '乐乐趣揭秘翻翻书', price: '¥49', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    // Stage 3: 6-9个月
+    's3_0': {
+      overview: '宝宝能独坐稳了，爬行速度加快，开始理解简单的指令和词语。',
+      stats: { weight: '8.5', height: '69.5', head: '43.8' },
+      traits: ['独坐很稳，手腕灵活','爬行速度明显加快','能听懂"不可以"等简单词','开始用手指指物品表达需求'],
+      prepare: ['学饮杯过渡水杯','更丰富的辅食食材','安全围栏加固','互动类早教玩具'],
+      question: '7个月宝宝辅食可以加蛋黄了吗？',
+      cert: '《中国居民膳食指南(2022)》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: 'NUK学饮杯鸭嘴杯', reason: '7月龄开始练习用杯子喝水，鸭嘴设计平稳过渡', price: '¥59', original: '¥79', img: 'product-formula.png' },
+          alts: [
+            { name: 'Bbox吸管杯', price: '¥89', img: 'product-formula.png' },
+            { name: '利其尔学饮杯', price: '¥69', img: 'product-formula.png' },
+            { name: '贝亲magmag水杯', price: '¥55', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '谷雨六面体游戏桌', reason: '手腕灵活度提升，多功能游戏桌满足探索欲', price: '¥159', original: '¥229', img: 'product-diaper.png' },
+          alts: [
+            { name: 'VTech学习活动桌', price: '¥199', img: 'product-diaper.png' },
+            { name: 'Fisher-Price活动中心', price: '¥249', img: 'product-diaper.png' },
+            { name: '澳贝多功能游戏台', price: '¥139', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '婴儿软底学步鞋', reason: '爬行期脚部保护，软底设计不影响足部发育', price: '¥89', original: '¥129', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Mikihouse学步鞋', price: '¥299', img: 'product-clothes.png' },
+            { name: '基诺浦学步鞋', price: '¥169', img: 'product-clothes.png' },
+            { name: '卡特兔软底鞋', price: '¥79', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: 'Babycare游泳圈(腋下)', reason: '7个月适合开始亲子游泳，腋下圈安全稳固', price: '¥79', original: '¥119', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Swimava婴儿泳圈', price: '¥199', img: 'product-stroller.png' },
+            { name: 'Mambobaby不用充气泳圈', price: '¥149', img: 'product-stroller.png' },
+            { name: '蔓葆婴儿游泳圈', price: '¥59', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '点读笔早教套装', reason: '开始理解语言了，点读笔用声音互动激发语言发展', price: '¥299', original: '¥399', img: 'product-diaper.png' },
+          alts: [
+            { name: '小达人点读笔', price: '¥258', img: 'product-diaper.png' },
+            { name: '洪恩点读笔', price: '¥199', img: 'product-diaper.png' },
+            { name: '火火兔早教机', price: '¥159', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '形状配对积木盒', reason: '手指指物+独坐稳，形状配对训练精细动作和认知', price: '¥69', original: '¥99', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Hape形状分类盒', price: '¥89', img: 'product-diaper.png' },
+            { name: 'Melissa&Doug形状板', price: '¥79', img: 'product-diaper.png' },
+            { name: '木玩世家积木', price: '¥59', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's3_1': {
+      overview: '8个月宝宝模仿能力增强，会拍手、再见等手势，爬行更加灵活。',
+      stats: { weight: '8.9', height: '71.0', head: '44.3' },
+      traits: ['能扶着家具站起来','会拍手、挥手再见','开始模仿大人动作','精细动作发展，能捏小物品'],
+      prepare: ['围栏内软垫加厚','手指食物多样化','互动绘本','防摔头部保护垫'],
+      question: '8个月宝宝扶站时O型腿正常吗？',
+      cert: '《美国儿科学会育儿百科》认证',
+      focusCat: 'improve',
+      products: {
+        eat: {
+          main: { name: '宝宝面条细碎面', reason: '8月龄咀嚼力增强，碎面锻炼咀嚼过渡到粗粮', price: '¥29', original: '¥39', img: 'product-formula.png' },
+          alts: [
+            { name: '英氏面条多口味', price: '¥25', img: 'product-formula.png' },
+            { name: '方广宝宝面', price: '¥19', img: 'product-formula.png' },
+            { name: '小皮有机面条', price: '¥35', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '学步推车(带刹车)', reason: '扶站能力进步，学步推车辅助迈步练习安全过渡', price: '¥199', original: '¥279', img: 'product-diaper.png' },
+          alts: [
+            { name: 'VTech学步车', price: '¥229', img: 'product-diaper.png' },
+            { name: '可优比多功能学步车', price: '¥169', img: 'product-diaper.png' },
+            { name: 'Babycare学步推车', price: '¥189', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '宝宝防摔头部保护垫', reason: '学站摇晃容易后倒，小蜜蜂护头垫保护后脑', price: '¥39', original: '¥59', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Babycare护头枕', price: '¥45', img: 'product-clothes.png' },
+            { name: '松鼠贝贝防摔帽', price: '¥29', img: 'product-clothes.png' },
+            { name: '可优比防撞枕', price: '¥35', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '遛娃溜娃神器轻便', reason: '宝宝更重了想出门，轻便遛娃车比推车更灵活', price: '¥259', original: '¥359', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Babycare遛娃车', price: '¥299', img: 'product-stroller.png' },
+            { name: 'bebebus艺术家', price: '¥899', img: 'product-stroller.png' },
+            { name: '好孩子口袋车D678', price: '¥499', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '互动翻翻绘本套装', reason: '模仿能力强，互动绘本引导语言和社交发展', price: '¥89', original: '¥129', img: 'product-diaper.png' },
+          alts: [
+            { name: '小熊宝宝绘本', price: '¥49', img: 'product-diaper.png' },
+            { name: '猜猜我有多爱你', price: '¥29', img: 'product-diaper.png' },
+            { name: '好饿的毛毛虫', price: '¥39', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '叠叠高+套杯组合', reason: '精细动作发展期，叠高和套叠训练手眼协调', price: '¥59', original: '¥89', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Hape彩虹叠叠乐', price: '¥69', img: 'product-diaper.png' },
+            { name: 'Fisher-Price层层叠', price: '¥49', img: 'product-diaper.png' },
+            { name: 'B.Toys数字叠叠杯', price: '¥55', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's3_2': {
+      overview: '宝宝能扶走几步了，说话欲望强烈，喜欢指着东西要大人说名字。',
+      stats: { weight: '9.2', height: '72.5', head: '44.8' },
+      traits: ['扶着家具能侧走几步','有意识叫"妈妈""爸爸"','指物要求命名','能理解更多指令如"给我"'],
+      prepare: ['学步鞋（即将独走）','语言卡片/认知卡','XL码纸尿裤','安全插座保护'],
+      question: '9个月宝宝只会爬不会走是否需要干预？',
+      cert: '《崔玉涛育儿百科》认证',
+      focusCat: 'learn',
+      products: {
+        eat: {
+          main: { name: '宝宝零食大礼包(9m+)', reason: '9月龄手指食物多样化，有机健康零食培养自主进食', price: '¥79', original: '¥119', img: 'product-formula.png' },
+          alts: [
+            { name: '小皮有机饼干', price: '¥32', img: 'product-formula.png' },
+            { name: '嘉宝手指泡芙', price: '¥28', img: 'product-formula.png' },
+            { name: '英氏溶豆', price: '¥25', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '儿童安全插座保护盖', reason: '宝宝能扶走了，活动范围扩大，插座保护刻不容缓', price: '¥19', original: '¥29', img: 'product-diaper.png' },
+          alts: [
+            { name: '防触电插座盖套装', price: '¥15', img: 'product-diaper.png' },
+            { name: '全屋安全二次防护', price: '¥59', img: 'product-diaper.png' },
+            { name: '抽屉安全锁', price: '¥25', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '基诺浦关键鞋(学步)', reason: '即将独立行走，关键鞋底支撑足弓正确发育', price: '¥199', original: '¥269', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Mikihouse获奖学步鞋', price: '¥399', img: 'product-clothes.png' },
+            { name: '月星学步鞋', price: '¥159', img: 'product-clothes.png' },
+            { name: '卡特兔机能鞋', price: '¥129', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '宝宝外出辅食保温桶', reason: '外出时间增长，保温桶让宝宝随时吃上温热辅食', price: '¥89', original: '¥129', img: 'product-stroller.png' },
+          alts: [
+            { name: '膳魔师儿童保温杯', price: '¥139', img: 'product-stroller.png' },
+            { name: 'Thermos焖烧杯', price: '¥159', img: 'product-stroller.png' },
+            { name: '象印保温食物罐', price: '¥119', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '认知卡片200张套装', reason: '宝宝指物要命名，认知卡片系统建立词汇量', price: '¥49', original: '¥79', img: 'product-diaper.png' },
+          alts: [
+            { name: '阳光宝贝认知卡', price: '¥35', img: 'product-diaper.png' },
+            { name: '宝宝巴士有声卡', price: '¥69', img: 'product-diaper.png' },
+            { name: '趣威文化点读认知', price: '¥89', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '大颗粒积木60片', reason: '理解力增强+精细动作提升，积木培养空间想象力', price: '¥99', original: '¥149', img: 'product-diaper.png' },
+          alts: [
+            { name: '乐高得宝大颗粒', price: '¥199', img: 'product-diaper.png' },
+            { name: '布鲁可大颗粒积木', price: '¥129', img: 'product-diaper.png' },
+            { name: 'Mega Bloks积木袋', price: '¥89', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's3_3': {
+      overview: '快9个月了！宝宝独立意识增强，喜欢自己尝试做事，表达欲旺盛。',
+      stats: { weight: '9.5', height: '73.5', head: '45.2' },
+      traits: ['可能迈出独立第一步','喜欢翻箱倒柜探索','情绪表达更丰富','能用手势表达"要""不要"'],
+      prepare: ['宝宝餐具自主进食','情绪绘本引导','防撞地垫升级','小型滑梯/攀爬架'],
+      question: '9个月宝宝总喜欢扔东西是调皮吗？',
+      cert: '《游戏力》认证',
+      focusCat: 'improve',
+      products: {
+        eat: {
+          main: { name: '宝宝自主进食餐具套装', reason: '独立意识增强，弯头叉勺设计让宝宝自己尝试吃饭', price: '¥69', original: '¥99', img: 'product-formula.png' },
+          alts: [
+            { name: 'Doddl儿童学食叉勺', price: '¥139', img: 'product-formula.png' },
+            { name: 'Bbox吸盘碗+勺', price: '¥89', img: 'product-formula.png' },
+            { name: '可优比注水保温碗', price: '¥59', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '小型室内滑梯', reason: '探索欲旺盛但户外受限，室内滑梯满足攀爬需求', price: '¥299', original: '¥459', img: 'product-diaper.png' },
+          alts: [
+            { name: '曼龙滑梯秋千组合', price: '¥599', img: 'product-diaper.png' },
+            { name: 'Babycare折叠滑梯', price: '¥249', img: 'product-diaper.png' },
+            { name: '可优比攀爬架', price: '¥399', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '幼儿运动套装(秋冬)', reason: '活动量大增，运动面料弹力好不束缚', price: '¥99', original: '¥139', img: 'product-clothes.png' },
+          alts: [
+            { name: '安踏儿童运动套装', price: '¥129', img: 'product-clothes.png' },
+            { name: '优衣库幼儿弹力裤', price: '¥79', img: 'product-clothes.png' },
+            { name: 'balabala运动套装', price: '¥109', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '多功能遛娃背包', reason: '外出时间更长，大容量分区背包装下所有宝宝用品', price: '¥159', original: '¥229', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Skip Hop妈咪包', price: '¥299', img: 'product-stroller.png' },
+            { name: 'Babycare妈咪包', price: '¥199', img: 'product-stroller.png' },
+            { name: 'Lassig妈咪背包', price: '¥399', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '情绪管理绘本套装', reason: '情绪表达丰富期，绘本帮助宝宝认识和管理情绪', price: '¥79', original: '¥119', img: 'product-diaper.png' },
+          alts: [
+            { name: '我的情绪小怪兽', price: '¥39', img: 'product-diaper.png' },
+            { name: '生气的亚瑟', price: '¥25', img: 'product-diaper.png' },
+            { name: '菲菲生气了', price: '¥29', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '蒙氏教具套装(9-12月)', reason: '独立意识萌发，蒙氏教具培养专注力和自主探索', price: '¥149', original: '¥219', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Lovevery游戏盒', price: '¥399', img: 'product-diaper.png' },
+            { name: '蒙氏拼插板', price: '¥89', img: 'product-diaper.png' },
+            { name: 'Hape几何积木', price: '¥79', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    // Stage 4: 1岁
+    's4_0': {
+      overview: '快10个月了！宝宝已经能独立行走几步，语言发展进入爆发前期。',
+      stats: { weight: '9.8', height: '75.0', head: '45.5' },
+      traits: ['独立行走逐渐稳定','能说3-5个有意义的词','喜欢模仿大人做家务','开始对同龄人产生兴趣'],
+      prepare: ['学步鞋升级（室外款）','语言互动类玩具','社交类绘本','幼儿牙刷牙膏'],
+      question: '10个月宝宝说话只会叫妈妈正常吗？',
+      cert: '《从出生到3岁》认证',
+      focusCat: 'learn',
+      products: {
+        eat: {
+          main: { name: '3段幼儿配方奶粉', reason: '满1岁转3段，营养配比适合学步期宝宝', price: '¥298', original: '¥358', img: 'product-formula.png' },
+          alts: [
+            { name: '飞鹤星飞帆3段', price: '¥238', img: 'product-formula.png' },
+            { name: 'a2至初3段', price: '¥318', img: 'product-formula.png' },
+            { name: '合生元派星3段', price: '¥268', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '儿童电动牙刷U型', reason: '乳牙已萌出多颗，U型设计全方位清洁宝宝牙齿', price: '¥79', original: '¥129', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Babysmile儿童电动牙刷', price: '¥99', img: 'product-diaper.png' },
+            { name: '舒客宝贝儿童牙刷', price: '¥49', img: 'product-diaper.png' },
+            { name: 'Oral-B儿童电动牙刷', price: '¥149', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '基诺浦机能鞋(户外)', reason: '独走稳定后户外活动增多，机能鞋保护足弓', price: '¥229', original: '¥299', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Nike小童运动鞋', price: '¥299', img: 'product-clothes.png' },
+            { name: 'New Balance童鞋', price: '¥259', img: 'product-clothes.png' },
+            { name: '江博士健康鞋', price: '¥199', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '儿童三轮车/滑板车', reason: '行走稳定后运动需求增加，三轮车锻炼平衡能力', price: '¥199', original: '¥299', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Micro米高滑板车', price: '¥499', img: 'product-stroller.png' },
+            { name: 'Babycare平衡车', price: '¥259', img: 'product-stroller.png' },
+            { name: '好孩子三轮车', price: '¥179', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '有声词汇点读书', reason: '语言爆发前期，有声书扩大词汇输入量', price: '¥89', original: '¥139', img: 'product-diaper.png' },
+          alts: [
+            { name: '趣威文化有声书', price: '¥79', img: 'product-diaper.png' },
+            { name: '乐乐趣发声书', price: '¥59', img: 'product-diaper.png' },
+            { name: 'LeapFrog点触学习机', price: '¥199', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '过家家玩具套装', reason: '爱模仿做家务，过家家角色扮演促进社交认知', price: '¥89', original: '¥139', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Hape厨房玩具', price: '¥199', img: 'product-diaper.png' },
+            { name: '木玩世家过家家', price: '¥79', img: 'product-diaper.png' },
+            { name: 'B.Toys医生套装', price: '¥99', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's4_1': {
+      overview: '宝宝快11个月，走路越来越稳，开始有自己的小主意，独立性增强。',
+      stats: { weight: '10.1', height: '76.5', head: '45.8' },
+      traits: ['走路基本稳定不常摔','能说5-10个词','有明确的喜好偏好','开始有简单的假装游戏'],
+      prepare: ['拼图/串珠等精细玩具','独立吃饭训练碗','安全的户外玩具','绘本阅读习惯培养'],
+      question: '快1岁的宝宝还需要每天喝多少奶？',
+      cert: '《美国儿科学会育儿百科》认证',
+      focusCat: 'eat',
+      products: {
+        eat: {
+          main: { name: '宝宝辅食食谱+食材包', reason: '接近1岁饮食向成人过渡，专业食谱保证营养均衡', price: '¥128', original: '¥198', img: 'product-formula.png' },
+          alts: [
+            { name: '每日鲜辅食配送(周卡)', price: '¥199', img: 'product-formula.png' },
+            { name: '宝宝营养面条礼盒', price: '¥89', img: 'product-formula.png' },
+            { name: '有机辅食调味品套装', price: '¥59', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '12片大块拼图(幼儿)', reason: '精细动作和认知配合，拼图训练观察力和专注力', price: '¥39', original: '¥59', img: 'product-diaper.png' },
+          alts: [
+            { name: 'MiDeer拼图套装', price: '¥59', img: 'product-diaper.png' },
+            { name: 'Hape旋钮拼图', price: '¥49', img: 'product-diaper.png' },
+            { name: '木质动物拼板', price: '¥29', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '幼儿防水雨靴', reason: '户外活动增多，雨天也能出门探索不怕弄湿', price: '¥59', original: '¥89', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Hatley儿童雨靴', price: '¥199', img: 'product-clothes.png' },
+            { name: 'Native童鞋(防水)', price: '¥249', img: 'product-clothes.png' },
+            { name: '日本IFME儿童雨鞋', price: '¥129', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '宝宝户外沙滩玩具', reason: '走稳后爱户外探索，沙滩玩具满足挖掘探索欲', price: '¥49', original: '¥79', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Hape沙滩玩具套装', price: '¥69', img: 'product-stroller.png' },
+            { name: 'Green Toys沙滩桶', price: '¥89', img: 'product-stroller.png' },
+            { name: '可优比戏水沙滩套', price: '¥39', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '绘本阅读20册套装(1岁+)', reason: '培养阅读习惯关键期，每天亲子共读15分钟', price: '¥99', original: '¥159', img: 'product-diaper.png' },
+          alts: [
+            { name: '噼里啪啦系列绘本', price: '¥69', img: 'product-diaper.png' },
+            { name: '小鸡球球绘本', price: '¥79', img: 'product-diaper.png' },
+            { name: '佩奇故事书套装', price: '¥89', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '串珠穿线玩具', reason: '精细动作训练关键期，串珠提升手指灵活度', price: '¥45', original: '¥69', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Hape串珠绕珠', price: '¥79', img: 'product-diaper.png' },
+            { name: 'Melissa穿珠套装', price: '¥59', img: 'product-diaper.png' },
+            { name: '木玩世家穿线板', price: '¥39', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's4_2': {
+      overview: '满1岁啦！宝宝进入幼儿期，各方面能力飞速发展，是个小探索家。',
+      stats: { weight: '10.5', height: '78.0', head: '46.0' },
+      traits: ['能独立走得很稳甚至小跑','词汇量快速增加','有强烈的自主意识','对因果关系非常好奇'],
+      prepare: ['学饮杯完全替代奶瓶','更多户外探索装备','社交能力培养','如厕训练准备（观察信号）'],
+      question: '1岁宝宝应该戒掉奶瓶了吗？',
+      cert: '《从出生到3岁》认证',
+      focusCat: 'learn',
+      products: {
+        eat: {
+          main: { name: '不锈钢吸管杯(戒奶瓶)', reason: '满1岁建议戒奶瓶，吸管杯让过渡更自然', price: '¥79', original: '¥109', img: 'product-formula.png' },
+          alts: [
+            { name: 'Bbox重力球吸管杯', price: '¥99', img: 'product-formula.png' },
+            { name: '膳魔师儿童保温吸管杯', price: '¥139', img: 'product-formula.png' },
+            { name: '利其尔透透杯', price: '¥69', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '磁力片积木100片', reason: '对因果关系好奇，磁力片搭建满足创造力爆发', price: '¥159', original: '¥239', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Magformers磁力片', price: '¥299', img: 'product-diaper.png' },
+            { name: '贝恩施磁力片', price: '¥129', img: 'product-diaper.png' },
+            { name: '科博磁力棒', price: '¥89', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '幼儿运动鞋(稳步)', reason: '能小跑了，稳步期运动鞋提供足够支撑和保护', price: '¥239', original: '¥319', img: 'product-clothes.png' },
+          alts: [
+            { name: 'Adidas小童运动鞋', price: '¥329', img: 'product-clothes.png' },
+            { name: '基诺浦稳步鞋', price: '¥249', img: 'product-clothes.png' },
+            { name: 'Asics亚瑟士童鞋', price: '¥299', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '幼儿平衡车', reason: '运动能力进阶，平衡车是骑自行车的最佳过渡', price: '¥299', original: '¥459', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Strider平衡车', price: '¥599', img: 'product-stroller.png' },
+            { name: 'Puky平衡车', price: '¥499', img: 'product-stroller.png' },
+            { name: '可优比平衡车', price: '¥199', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '双语早教点读笔套装', reason: '词汇爆发期，中英双语输入抓住语言黄金期', price: '¥399', original: '¥599', img: 'product-diaper.png' },
+          alts: [
+            { name: '毛毛虫点读笔', price: '¥299', img: 'product-diaper.png' },
+            { name: '小达人点读笔', price: '¥258', img: 'product-diaper.png' },
+            { name: '洪恩双语点读', price: '¥359', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '蒙氏感官教具套装(1-2岁)', reason: '自主意识强+好奇心旺盛，蒙氏教具系统培养能力', price: '¥199', original: '¥299', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Lovevery 1岁游戏盒', price: '¥459', img: 'product-diaper.png' },
+            { name: '蒙氏套柱套装', price: '¥99', img: 'product-diaper.png' },
+            { name: 'Hape多功能百宝箱', price: '¥159', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    },
+    's4_3': {
+      overview: '1岁+的宝宝越来越像个小大人，语言社交飞速进步，充满好奇心。',
+      stats: { weight: '11.0', height: '80.0', head: '46.5' },
+      traits: ['能跑能跳活力充沛','词汇量50+，开始组词','有自己的社交圈','对规则和秩序感兴趣'],
+      prepare: ['如厕训练小马桶','户外运动装备升级','社交活动安排','专注力培养玩具'],
+      question: '1岁多的宝宝什么时候开始如厕训练？',
+      cert: '《美国儿科学会育儿百科》认证',
+      focusCat: 'improve',
+      products: {
+        eat: {
+          main: { name: '儿童分格餐盘套装', reason: '饮食多样化阶段，分格餐盘培养均衡饮食习惯', price: '¥69', original: '¥99', img: 'product-formula.png' },
+          alts: [
+            { name: 'ezpz笑脸餐盘', price: '¥149', img: 'product-formula.png' },
+            { name: 'Bbox分格餐盘', price: '¥89', img: 'product-formula.png' },
+            { name: '可优比吸盘餐盘', price: '¥59', img: 'product-formula.png' }
+          ]
+        },
+        use: {
+          main: { name: '儿童如厕训练马桶', reason: '如厕训练信号已出现，专用小马桶建立自主如厕习惯', price: '¥89', original: '¥139', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Babybjorn小马桶', price: '¥199', img: 'product-diaper.png' },
+            { name: '可优比阶梯马桶圈', price: '¥99', img: 'product-diaper.png' },
+            { name: '好孩子儿童坐便器', price: '¥69', img: 'product-diaper.png' }
+          ]
+        },
+        clothes: {
+          main: { name: '训练裤/学习裤6件装', reason: '如厕训练期，学习裤介于纸尿裤和内裤之间便于过渡', price: '¥79', original: '¥119', img: 'product-clothes.png' },
+          alts: [
+            { name: '花王学步裤XL', price: '¥89', img: 'product-clothes.png' },
+            { name: '棉花堂训练内裤', price: '¥59', img: 'product-clothes.png' },
+            { name: '英氏婴儿学习裤', price: '¥69', img: 'product-clothes.png' }
+          ]
+        },
+        travel: {
+          main: { name: '儿童太阳镜+遮阳帽', reason: '户外活动增多，紫外线防护保护宝宝眼睛和皮肤', price: '¥79', original: '¥119', img: 'product-stroller.png' },
+          alts: [
+            { name: 'Babiators儿童墨镜', price: '¥199', img: 'product-stroller.png' },
+            { name: 'Sunday Afternoons遮阳帽', price: '¥129', img: 'product-stroller.png' },
+            { name: 'Lassig防晒套装', price: '¥159', img: 'product-stroller.png' }
+          ]
+        },
+        learn: {
+          main: { name: '词汇组合游戏书', reason: '开始组词说短句，游戏书巩固语言发展', price: '¥69', original: '¥99', img: 'product-diaper.png' },
+          alts: [
+            { name: '语言启蒙绘本套装', price: '¥89', img: 'product-diaper.png' },
+            { name: '宝宝巴士语言课', price: '¥49', img: 'product-diaper.png' },
+            { name: '互动点读词汇书', price: '¥79', img: 'product-diaper.png' }
+          ]
+        },
+        improve: {
+          main: { name: '专注力训练游戏盒(1-2岁)', reason: '规则感建立期，专注力游戏培养持续注意力', price: '¥129', original: '¥199', img: 'product-diaper.png' },
+          alts: [
+            { name: 'Montessori专注力套装', price: '¥179', img: 'product-diaper.png' },
+            { name: '逻辑狗思维训练', price: '¥99', img: 'product-diaper.png' },
+            { name: 'Hape迷宫走珠', price: '¥79', img: 'product-diaper.png' }
+          ]
+        }
+      }
+    }
+  }
+};
+
+// ========== STATE ==========
+let currentStage = 0;
+let currentWeek = 0;
+let currentCat = 0;
+
+// ========== RENDER ==========
+function getWeekKey() {
+  return `s${currentStage + 1}_${currentWeek}`;
+}
+
+function renderStageTabs() {
+  const container = document.getElementById('stageTabs');
+  container.innerHTML = DATA.stages.map((s, i) =>
+    `<button class="stage-tab ${i === currentStage ? 'active' : ''}" onclick="selectStage(${i})">${s.label}</button>`
+  ).join('');
+}
+
+function renderWeekTabs() {
+  const container = document.getElementById('weekTabs');
+  const stage = DATA.stages[currentStage];
+  container.innerHTML = stage.weeks.map((w, i) =>
+    `<button class="week-tab ${i === currentWeek ? 'active' : ''}" onclick="selectWeek(${i})">${w}</button>`
+  ).join('');
+}
+
+function renderModule1() {
+  const container = document.getElementById('module1');
+  const key = getWeekKey();
+  const d = DATA.weeks[key];
+  if (!d) { container.innerHTML = '<p style="padding:20px;text-align:center;color:#999;">暂无数据</p>'; return; }
+
+  container.innerHTML = `
+    <!-- Baby Overview -->
+    <div class="baby-overview">
+      <div class="overview-header">
+        <div class="overview-left">
+          <div class="overview-title">🌟 宝宝在这周</div>
+          <div class="overview-desc">${d.overview}</div>
+        </div>
+        <div class="overview-right">
+          <img src="images/baby-mascot.png" alt="宝宝" />
+        </div>
+      </div>
+      <div class="baby-stats">
+        <div class="stat-item">
+          <div class="stat-label">体重</div>
+          <div class="stat-value">${d.stats.weight}<span class="stat-unit">kg</span></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">身高</div>
+          <div class="stat-value">${d.stats.height}<span class="stat-unit">cm</span></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">头围</div>
+          <div class="stat-value">${d.stats.head}<span class="stat-unit">cm</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Baby Changes -->
+    <div class="baby-changes">
+      <div class="changes-title">📋 本周关注重点</div>
+      <div class="changes-grid">
+        <div class="change-col traits-col">
+          <div class="change-col-title traits">🔍 宝宝特点</div>
+          ${d.traits.map((t, i) => `<div class="change-item" onclick="jumpToCat('${d.focusCat}')">${t}</div>`).join('')}
+        </div>
+        <div class="change-col prepare-col">
+          <div class="change-col-title prepare">🛒 适合准备</div>
+          ${d.prepare.map((p, i) => `<div class="change-item" onclick="jumpToCatFromPrepare('${p}')">${p}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Q&A Bar -->
+    <div class="qa-bar">
+      <div class="qa-question">
+        <div class="qa-text">💡 ${d.question}</div>
+        <button class="qa-search" onclick="searchQuestion('${d.question}')">搜索</button>
+      </div>
+      <div class="qa-cert">${d.cert}</div>
+    </div>
+  `;
+}
+
+function renderModule2() {
+  const container = document.getElementById('module2');
+  const key = getWeekKey();
+  const d = DATA.weeks[key];
+  if (!d) { container.innerHTML = ''; return; }
+
+  const stageId = DATA.stages[currentStage].id;
+  const availableCats = DATA.catsPerStage[stageId];
+
+  // Ensure currentCat is within available range
+  const focusIdx = availableCats.indexOf(d.focusCat);
+  if (currentCat >= availableCats.length) currentCat = focusIdx >= 0 ? focusIdx : 0;
+
+  const activeCatId = availableCats[currentCat];
+  const catData = d.products[activeCatId];
+
+  container.innerHTML = `
+    <div class="module-2-title">🛍️ 为宝宝智选好物</div>
+    <!-- Category Tabs -->
+    <div class="cat-tabs">
+      ${availableCats.map((cat, i) => `
+        <button class="cat-tab ${i === currentCat ? 'active' : ''} ${cat === d.focusCat ? 'focus' : ''}" 
+                onclick="selectCat(${i})" id="cat-${cat}">
+          ${DATA.catIcons[cat]} ${DATA.catLabels[cat]}
+        </button>
+      `).join('')}
+    </div>
+
+    ${catData ? `
+    <!-- AI Main Product -->
+    <div class="ai-product-main">
+      <div class="ai-badge">AI 智能推荐</div>
+      <div class="ai-product-content">
+        <div class="ai-product-img">
+          <img src="images/${catData.main.img}" alt="${catData.main.name}" />
+        </div>
+        <div class="ai-product-info">
+          <div class="ai-product-name">${catData.main.name}</div>
+          <div class="ai-product-reason">${catData.main.reason}</div>
+          <div class="ai-product-price">${catData.main.price} <span class="original">${catData.main.original}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alternative Products -->
+    <div class="alt-products-title">其他优选</div>
+    <div class="alt-products">
+      ${catData.alts.map(alt => `
+        <div class="alt-product">
+          <div class="alt-product-img">
+            <img src="images/${alt.img}" alt="${alt.name}" />
+          </div>
+          <div class="alt-product-name">${alt.name}</div>
+          <div class="alt-product-price">${alt.price}</div>
+        </div>
+      `).join('')}
+    </div>
+    ` : '<p style="padding:20px;text-align:center;color:#999;">该分类暂无推荐</p>'}
+  `;
+}
+
+// ========== INTERACTIONS ==========
+function selectStage(idx) {
+  currentStage = idx;
+  currentWeek = 0;
+  currentCat = 0;
+  renderAll();
+}
+
+function selectWeek(idx) {
+  currentWeek = idx;
+  // Auto-jump to focus category
+  const key = getWeekKey();
+  const d = DATA.weeks[key];
+  if (d) {
+    const stageId = DATA.stages[currentStage].id;
+    const availableCats = DATA.catsPerStage[stageId];
+    const focusIdx = availableCats.indexOf(d.focusCat);
+    currentCat = focusIdx >= 0 ? focusIdx : 0;
+  }
+  renderAll();
+}
+
+function selectCat(idx) {
+  currentCat = idx;
+  renderModule2();
+}
+
+function jumpToCat(catId) {
+  const stageId = DATA.stages[currentStage].id;
+  const availableCats = DATA.catsPerStage[stageId];
+  const idx = availableCats.indexOf(catId);
+  if (idx >= 0) {
+    currentCat = idx;
+    renderModule2();
+    document.getElementById('module2').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function jumpToCatFromPrepare(text) {
+  // Map prepare text to category based on keywords
+  const mapping = {
+    '奶': 'eat', '辅食': 'eat', '食': 'eat', '喂': 'eat', '奶粉': 'eat', '米粉': 'eat', '吃': 'eat',
+    '尿': 'use', '牙': 'use', '玩具': 'use', '安全': 'use', '洗': 'use', '围栏': 'use',
+    '衣': 'clothes', '鞋': 'clothes', '袜': 'clothes', '帽': 'clothes', '穿': 'clothes',
+    '车': 'travel', '出': 'travel', '推车': 'travel', '座椅': 'travel', '外出': 'travel',
+    '书': 'learn', '绘本': 'learn', '读': 'learn', '卡片': 'learn', '语': 'learn',
+    '早教': 'improve', '积木': 'improve', '拼': 'improve', '训练': 'improve'
+  };
+  let targetCat = null;
+  for (const [keyword, cat] of Object.entries(mapping)) {
+    if (text.includes(keyword)) { targetCat = cat; break; }
+  }
+  if (targetCat) jumpToCat(targetCat);
+  else jumpToCat(DATA.weeks[getWeekKey()].focusCat);
+}
+
+function searchQuestion(q) {
+  // Simulate search/jump
+  alert('正在为您搜索: ' + q);
+}
+
+function renderAll() {
+  renderStageTabs();
+  renderWeekTabs();
+  renderModule1();
+  renderModule2();
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>
