@@ -5,126 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>母婴AI助手 - 点淘</title>
   <style>
-    :root {
-      --primary: #FF4D6A;
-      --primary-light: #FF8FA3;
-      --primary-bg: #FFF0F3;
-      --text-1: #222;
-      --text-2: #555;
-      --text-3: #999;
-      --bg: #F5F6F8;
-      --white: #FFF;
-      --border: #F0F0F0;
-      --green: #34C77B;
-      --green-bg: #EEFBF3;
-      --orange: #FF8C42;
-      --orange-bg: #FFF5ED;
-      --blue: #4A90E2;
-      --blue-bg: #EDF4FD;
-      --radius: 14px;
-      --shadow: 0 2px 10px rgba(0,0,0,0.04);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: var(--bg); color: var(--text-1); -webkit-font-smoothing: antialiased; }
-    .app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: var(--bg); padding-bottom: 40px; }
-    .nav-header { background: linear-gradient(180deg, #FFE8EE 0%, #F5F6F8 100%); padding: 16px 0 0; position: sticky; top: 0; z-index: 100; }
-    .nav-title { text-align: center; font-size: 16px; font-weight: 600; color: var(--text-1); padding: 0 16px 10px; }
-    .stage-tabs { display: flex; justify-content: center; gap: 6px; padding: 0 16px 8px; }
-    .stage-tab { padding: 6px 16px; border-radius: 20px; font-size: 13px; color: var(--text-2); background: rgba(255,255,255,0.6); border: none; cursor: pointer; transition: all 0.2s; font-weight: 500; }
-    .stage-tab.active { background: var(--primary); color: var(--white); font-weight: 600; box-shadow: 0 2px 8px rgba(255,77,106,0.3); }
-    .week-tabs { display: flex; gap: 0; padding: 6px 16px 12px; overflow-x: auto; scrollbar-width: none; justify-content: center; }
-    .week-tabs::-webkit-scrollbar { display: none; }
-    .week-tab { padding: 5px 14px; border-radius: 16px; font-size: 12px; color: var(--text-3); background: transparent; border: none; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
-    .week-tab.active { background: var(--white); color: var(--primary); font-weight: 600; box-shadow: var(--shadow); }
-    .module-1 { padding: 0 14px; margin-top: 6px; }
-    .baby-overview { background: var(--white); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); margin-bottom: 10px; }
-    .overview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .overview-left { flex: 1; }
-    .overview-title { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
-    .overview-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-    .overview-right { width: 72px; height: 72px; margin-left: 12px; flex-shrink: 0; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #FFF0F3, #FFEEF2); }
-    .overview-right img { width: 100%; height: 100%; object-fit: cover; border: none; }
-    .baby-stats { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); align-items: center; }
-    .stat-item { flex: 1; text-align: center; padding: 8px 4px; background: #FAFBFC; border-radius: 10px; }
-    .stat-label { font-size: 11px; color: var(--text-3); margin-bottom: 3px; }
-    .stat-value { font-size: 15px; font-weight: 700; color: var(--text-1); }
-    .stat-unit { font-size: 11px; color: var(--text-3); font-weight: 400; }
-    .record-btn { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--white); border: none; padding: 8px 12px; border-radius: 18px; font-size: 11px; cursor: pointer; white-space: nowrap; font-weight: 500; box-shadow: 0 2px 6px rgba(255,77,106,0.3); }
-    .baby-changes { background: var(--white); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); margin-bottom: 10px; }
-    .changes-title { font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 12px; }
-    .changes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .change-col { background: #FAFBFC; border-radius: 10px; padding: 12px; }
-    .change-col-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-    .change-col-title.traits { color: var(--orange); }
-    .change-col-title.prepare { color: var(--blue); }
-    .change-item { font-size: 12px; color: var(--text-2); padding: 5px 0; border-bottom: 1px dashed var(--border); cursor: pointer; transition: color 0.2s; line-height: 1.5; }
-    .change-item:last-child { border-bottom: none; }
-    .change-item:hover { color: var(--primary); }
-    .change-item::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
-    .change-col.traits-col .change-item::before { background: var(--orange); }
-    .change-col.prepare-col .change-item::before { background: var(--blue); }
-    .qa-bar { background: linear-gradient(135deg, #FFF5F7, #FFF0F3); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 10px; border: 1px solid rgba(255,77,106,0.08); }
-    .qa-question { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .qa-text { font-size: 13px; color: var(--text-1); font-weight: 500; flex: 1; }
-    .qa-search { background: var(--primary); color: var(--white); border: none; padding: 5px 12px; border-radius: 14px; font-size: 11px; cursor: pointer; flex-shrink: 0; margin-left: 10px; }
-    .qa-cert { font-size: 11px; color: var(--text-3); }
-    .qa-cert::before { content: '\2713'; display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--green-bg); color: var(--green); font-size: 9px; text-align: center; line-height: 14px; margin-right: 4px; }
-    .module-2 { padding: 0 14px; margin-top: 6px; }
-    .module-2-title { font-size: 15px; font-weight: 700; color: var(--text-1); padding: 10px 0 8px; }
-    .cat-tabs { display: flex; gap: 0; margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-    .cat-tabs::-webkit-scrollbar { display: none; }
-    .cat-tab { padding: 7px 14px; border-radius: 18px; font-size: 12px; color: var(--text-2); background: var(--white); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
-    .cat-tab.active { background: var(--primary-bg); color: var(--primary); border-color: var(--primary); font-weight: 600; }
-    .cat-tab.focus { animation: focusPulse 1.5s ease-in-out 2; }
-    @keyframes focusPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05);box-shadow:0 0 8px rgba(255,77,106,0.3)} }
-    .ai-product-main { background: linear-gradient(135deg, #FFF5F7, #FFEEF2, #FFF8FA); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,77,106,0.1); position: relative; overflow: hidden; }
-    .ai-badge { position: absolute; top: 0; left: 0; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--white); font-size: 10px; padding: 3px 10px 3px 8px; border-radius: 0 0 12px 0; font-weight: 600; }
-    .ai-product-content { display: flex; align-items: flex-start; gap: 12px; margin-top: 10px; }
-    .ai-product-img { width: 80px; height: 80px; border-radius: 12px; background: var(--white); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; flex-shrink: 0; }
-    .ai-product-img img { width: 70%; height: 70%; object-fit: contain; }
-    .ai-product-info { flex: 1; }
-    .ai-product-name { font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 6px; }
-    .ai-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
-    .ai-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: rgba(255,77,106,0.08); color: var(--primary); font-weight: 500; }
-    .ai-product-price-row { display: flex; align-items: center; justify-content: space-between; }
-    .ai-product-price { font-size: 16px; font-weight: 700; color: var(--primary); }
-    .ai-product-price .original { font-size: 12px; color: var(--text-3); text-decoration: line-through; font-weight: 400; margin-left: 6px; }
-    .ai-btns { display: flex; gap: 6px; }
-    .btn-live { background: #FF8C42; color: var(--white); border: none; padding: 5px 10px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: 500; }
-    .btn-buy { background: var(--primary); color: var(--white); border: none; padding: 5px 10px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: 500; }
-    .alt-products-title { font-size: 12px; color: var(--text-3); margin-bottom: 8px; padding-left: 2px; }
-    .alt-products { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-    .alt-product { background: var(--white); border-radius: 10px; padding: 10px; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.2s; position: relative; }
-    .alt-product:hover { transform: translateY(-2px); }
-    .alt-product-img { width: 48px; height: 48px; margin: 0 auto 6px; background: #FAFBFC; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .alt-product-img img { width: 70%; height: 70%; object-fit: contain; }
-    .alt-product-name { font-size: 11px; color: var(--text-2); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .alt-product-price { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 6px; }
-    .alt-product-btn { background: var(--primary-bg); color: var(--primary); border: 1px solid rgba(255,77,106,0.2); padding: 3px 0; border-radius: 10px; font-size: 10px; cursor: pointer; width: 100%; }
-    .coupon-section { background: linear-gradient(135deg, #FFF8E1, #FFFDE8); border-radius: var(--radius); padding: 12px 16px; border: 1px solid rgba(255,140,66,0.15); margin-bottom: 10px; }
-    .coupon-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .coupon-title { font-size: 13px; font-weight: 600; color: var(--orange); }
-    .coupon-more { font-size: 11px; color: var(--text-3); }
-    .coupon-list { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-    .coupon-list::-webkit-scrollbar { display: none; }
-    .coupon-item { background: var(--white); border-radius: 8px; padding: 8px 12px; border: 1px dashed var(--orange); min-width: 120px; text-align: center; flex-shrink: 0; }
-    .coupon-amount { font-size: 16px; font-weight: 700; color: var(--primary); }
-    .coupon-amount span { font-size: 11px; font-weight: 400; }
-    .coupon-desc { font-size: 10px; color: var(--text-3); margin-top: 2px; }
-    .coupon-claim { background: var(--orange); color: var(--white); border: none; padding: 3px 12px; border-radius: 10px; font-size: 10px; cursor: pointer; margin-top: 4px; }
-    .record-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-    .record-modal.show { display: flex; }
-    .record-card { background: var(--white); border-radius: 16px; padding: 24px; width: 320px; max-width: 90vw; }
-    .record-card h3 { font-size: 16px; margin-bottom: 16px; text-align: center; }
-    .record-field { margin-bottom: 12px; }
-    .record-field label { font-size: 12px; color: var(--text-3); display: block; margin-bottom: 4px; }
-    .record-field input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-    .record-field input:focus { border-color: var(--primary); }
-    .record-btns { display: flex; gap: 10px; margin-top: 16px; }
-    .record-btns button { flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; cursor: pointer; border: none; }
-    .record-cancel { background: #f5f5f5; color: var(--text-2); }
-    .record-save { background: var(--primary); color: var(--white); }
-    .scroll-smooth { scroll-behavior: smooth; }
+    :root{--primary:#FF4D6A;--primary-light:#FF8FA3;--primary-bg:#FFF0F3;--text-1:#222;--text-2:#555;--text-3:#999;--bg:#F5F6F8;--white:#FFF;--border:#F0F0F0;--green:#34C77B;--green-bg:#EEFBF3;--orange:#FF8C42;--blue:#4A90E2;--radius:14px;--shadow:0 2px 10px rgba(0,0,0,0.04);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;}
+    .app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:40px;}
+    .nav-header{background:linear-gradient(180deg,#FFE8EE 0%,#F5F6F8 100%);padding:16px 0 0;position:sticky;top:0;z-index:100;}
+    .nav-title{text-align:center;font-size:16px;font-weight:600;color:var(--text-1);padding:0 16px 10px;}
+    .stage-tabs{display:flex;justify-content:center;gap:6px;padding:0 16px 8px;}
+    .stage-tab{padding:6px 16px;border-radius:20px;font-size:13px;color:var(--text-2);background:rgba(255,255,255,0.6);border:none;cursor:pointer;transition:all .2s;font-weight:500;}
+    .stage-tab.active{background:var(--primary);color:var(--white);font-weight:600;box-shadow:0 2px 8px rgba(255,77,106,0.3);}
+    .week-tabs{display:flex;gap:0;padding:6px 16px 12px;overflow-x:auto;scrollbar-width:none;justify-content:center;}
+    .week-tabs::-webkit-scrollbar{display:none;}
+    .week-tab{padding:5px 14px;border-radius:16px;font-size:12px;color:var(--text-3);background:transparent;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+    .week-tab.active{background:var(--white);color:var(--primary);font-weight:600;box-shadow:var(--shadow);}
+    .module-1{padding:0 14px;margin-top:6px;}
+    .baby-overview{background:var(--white);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:10px;}
+    .overview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .overview-left{flex:1;}
+    .overview-title{font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:6px;}
+    .overview-desc{font-size:13px;color:var(--text-2);line-height:1.6;}
+    .overview-right{width:72px;height:72px;margin-left:12px;flex-shrink:0;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#FFF0F3,#FFEEF2);}
+    .overview-right img{width:100%;height:100%;object-fit:cover;border:none;}
+    .baby-stats{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);align-items:center;}
+    .stat-item{flex:1;text-align:center;padding:8px 4px;background:#FAFBFC;border-radius:10px;}
+    .stat-label{font-size:11px;color:var(--text-3);margin-bottom:3px;}
+    .stat-value{font-size:15px;font-weight:700;color:var(--text-1);}
+    .stat-unit{font-size:11px;color:var(--text-3);font-weight:400;}
+    .record-btn{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);border:none;padding:8px 12px;border-radius:18px;font-size:11px;cursor:pointer;white-space:nowrap;font-weight:500;box-shadow:0 2px 6px rgba(255,77,106,0.3);}
+    .baby-changes{background:var(--white);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:10px;}
+    .changes-title{font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:12px;}
+    .changes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .change-col{background:#FAFBFC;border-radius:10px;padding:12px;}
+    .change-col-title{font-size:12px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:4px;}
+    .change-col-title.traits{color:var(--orange);}
+    .change-col-title.prepare{color:var(--blue);}
+    .change-item{font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px dashed var(--border);cursor:pointer;transition:color .2s;line-height:1.5;}
+    .change-item:last-child{border-bottom:none;}
+    .change-item:hover{color:var(--primary);}
+    .change-item::before{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+    .change-col.traits-col .change-item::before{background:var(--orange);}
+    .change-col.prepare-col .change-item::before{background:var(--blue);}
+    .qa-bar{background:linear-gradient(135deg,#FFF5F7,#FFF0F3);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:10px;border:1px solid rgba(255,77,106,0.08);}
+    .qa-question{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .qa-text{font-size:13px;color:var(--text-1);font-weight:500;flex:1;}
+    .qa-search{background:var(--primary);color:var(--white);border:none;padding:5px 12px;border-radius:14px;font-size:11px;cursor:pointer;flex-shrink:0;margin-left:10px;}
+    .qa-cert{font-size:11px;color:var(--text-3);}
+    .qa-cert::before{content:'\2713';display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--green-bg);color:var(--green);font-size:9px;text-align:center;line-height:14px;margin-right:4px;}
+    .module-2{padding:0 14px;margin-top:6px;}
+    .module-2-title{font-size:15px;font-weight:700;color:var(--text-1);padding:10px 0 8px;}
+    .cat-tabs{display:flex;gap:0;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+    .cat-tabs::-webkit-scrollbar{display:none;}
+    .cat-tab{padding:7px 14px;border-radius:18px;font-size:12px;color:var(--text-2);background:var(--white);border:1px solid var(--border);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+    .cat-tab.active{background:var(--primary-bg);color:var(--primary);border-color:var(--primary);font-weight:600;}
+    .cat-tab.focus{animation:focusPulse 1.5s ease-in-out 2;}
+    @keyframes focusPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05);box-shadow:0 0 8px rgba(255,77,106,0.3)}}
+    /* AI Product */
+    .ai-product-main{background:linear-gradient(135deg,#FFF5F7,#FFEEF2,#FFF8FA);border-radius:var(--radius);padding:16px;margin-bottom:10px;border:1px solid rgba(255,77,106,0.1);position:relative;overflow:hidden;}
+    .ai-badge{position:absolute;top:0;left:0;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:var(--white);font-size:10px;padding:3px 10px 3px 8px;border-radius:0 0 12px 0;font-weight:600;}
+    .ai-product-content{display:flex;align-items:flex-start;gap:12px;margin-top:10px;}
+    .ai-product-img{width:80px;height:80px;border-radius:12px;background:var(--white);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;flex-shrink:0;}
+    .ai-product-img img{width:70%;height:70%;object-fit:contain;}
+    .ai-product-info{flex:1;}
+    .ai-product-name{font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px;}
+    .ai-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+    .ai-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,77,106,0.08);color:var(--primary);font-weight:500;}
+    .ai-product-price-row{display:flex;align-items:center;justify-content:space-between;}
+    .ai-product-price{font-size:16px;font-weight:700;color:var(--primary);}
+    .ai-product-price .original{font-size:12px;color:var(--text-3);text-decoration:line-through;font-weight:400;margin-left:6px;}
+    .btn-buy-main{background:var(--primary);color:var(--white);border:none;padding:6px 14px;border-radius:14px;font-size:11px;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(255,77,106,0.3);}
+    /* Coupon under product */
+    .product-coupon{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 10px;background:linear-gradient(135deg,#FFF8E1,#FFFDE8);border-radius:8px;border:1px dashed rgba(255,140,66,0.3);}
+    .product-coupon-tag{background:var(--primary);color:var(--white);font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap;}
+    .product-coupon-text{font-size:11px;color:var(--orange);font-weight:500;flex:1;}
+    .product-coupon-btn{background:var(--orange);color:var(--white);border:none;padding:3px 10px;border-radius:10px;font-size:10px;cursor:pointer;white-space:nowrap;}
+    /* Live Stream Preview */
+    .live-preview{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:10px;cursor:pointer;transition:transform .2s;}
+    .live-preview:hover{transform:scale(1.01);}
+    .live-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);flex-shrink:0;}
+    .live-avatar img{width:100%;height:100%;object-fit:cover;}
+    .live-info{flex:1;}
+    .live-top{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+    .live-dot{width:6px;height:6px;border-radius:50%;background:#FF4444;animation:liveBlink 1s infinite;}
+    @keyframes liveBlink{0%,100%{opacity:1}50%{opacity:0.4}}
+    .live-label{font-size:9px;background:var(--primary);color:var(--white);padding:1px 5px;border-radius:3px;font-weight:600;}
+    .live-title{font-size:12px;color:var(--white);font-weight:500;}
+    .live-viewers{font-size:10px;color:rgba(255,255,255,0.6);}
+    .live-enter{background:var(--primary);color:var(--white);border:none;padding:6px 12px;border-radius:14px;font-size:11px;cursor:pointer;font-weight:500;white-space:nowrap;flex-shrink:0;}
+    /* Alt Products */
+    .alt-products-title{font-size:12px;color:var(--text-3);margin-bottom:8px;padding-left:2px;}
+    .alt-products{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+    .alt-product{background:var(--white);border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s;}
+    .alt-product:hover{transform:translateY(-2px);}
+    .alt-product-img{width:48px;height:48px;margin:0 auto 6px;background:#FAFBFC;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .alt-product-img img{width:70%;height:70%;object-fit:contain;}
+    .alt-product-name{font-size:11px;color:var(--text-2);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .alt-product-price{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:4px;}
+    .alt-coupon{font-size:9px;color:var(--orange);background:#FFF5ED;padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:5px;}
+    .alt-product-btn{background:var(--primary);color:var(--white);border:none;padding:4px 0;border-radius:10px;font-size:10px;cursor:pointer;width:100%;font-weight:500;}
+    /* Record Modal */
+    .record-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;}
+    .record-modal.show{display:flex;}
+    .record-card{background:var(--white);border-radius:16px;padding:24px;width:320px;max-width:90vw;}
+    .record-card h3{font-size:16px;margin-bottom:16px;text-align:center;}
+    .record-field{margin-bottom:12px;}
+    .record-field label{font-size:12px;color:var(--text-3);display:block;margin-bottom:4px;}
+    .record-field input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;}
+    .record-field input:focus{border-color:var(--primary);}
+    .record-btns{display:flex;gap:10px;margin-top:16px;}
+    .record-btns button{flex:1;padding:10px;border-radius:10px;font-size:14px;cursor:pointer;border:none;}
+    .record-cancel{background:#f5f5f5;color:var(--text-2);}
+    .record-save{background:var(--primary);color:var(--white);}
+    .scroll-smooth{scroll-behavior:smooth;}
   </style>
 </head>
 <body>
@@ -158,12 +149,22 @@ const DATA={stages:[
 ],catsPerStage:{s1:['eat','use','clothes','travel'],s2:['eat','use','clothes','travel','improve'],s3:['eat','use','clothes','travel','learn','improve'],s4:['eat','use','clothes','travel','learn','improve']},
 catLabels:{eat:'宝宝吃',use:'宝宝用',clothes:'宝宝穿衣',travel:'宝宝出行',learn:'宝宝学习',improve:'宝宝提升'},
 catIcons:{eat:'\u{1F37C}',use:'\u{1F9F8}',clothes:'\u{1F455}',travel:'\u{1F697}',learn:'\u{1F4D6}',improve:'\u2B50'},
-coupons:[
-{amount:'20',condition:'满199可用',desc:'母婴专区'},
-{amount:'50',condition:'满399可用',desc:'奶粉尿裤'},
-{amount:'100',condition:'满899可用',desc:'大牌爆品'},
-{amount:'15',condition:'满99可用',desc:'新人专享'}
-],
+liveRooms:{
+eat:{host:'母婴好物官',viewers:'2.3万',title:'宝宝口粮专场 大牌直降'},
+use:{host:'育儿达人甜甜',viewers:'1.8万',title:'宝宝好物 妈妈放心选'},
+clothes:{host:'童装搭配师',viewers:'9千',title:'宝宝穿搭 舒适又好看'},
+travel:{host:'遛娃装备控',viewers:'1.2万',title:'出行好物 带娃不累'},
+learn:{host:'早教启蒙师',viewers:'1.5万',title:'早教好物 科学启蒙'},
+improve:{host:'育儿专家团',viewers:'8千',title:'能力提升 聪明宝宝'}
+},
+couponMap:{
+eat:{amount:'20',condition:'满199可用'},
+use:{amount:'15',condition:'满129可用'},
+clothes:{amount:'10',condition:'满99可用'},
+travel:{amount:'50',condition:'满499可用'},
+learn:{amount:'20',condition:'满199可用'},
+improve:{amount:'15',condition:'满129可用'}
+},
 weeks:{
 's1_0':{overview:'宝宝刚来到世界，大部分时间在睡觉，开始适应外界环境。',stats:{weight:'3.5',height:'50.2',head:'34.8'},traits:['觅食反射强烈，饥饿转头找奶','每天睡眠16-18小时','可能出现新生儿黄疸','对强光有眨眼反应'],prepare:['准备新生儿奶粉备用','购入NB码纸尿裤','恒温水壶冲泡奶粉','新生儿包被襁褓巾'],question:'新生儿奶粉应该用多少度的水冲泡？',cert:'《美国儿科学会育儿百科》认证',focusCat:'eat',products:{
 eat:{main:{name:'爱他美卓萃1段奶粉',tags:['天然乳脂','HMO配方','亲近母乳'],price:'¥328',original:'¥398',img:'product-formula.png',live:true},alts:[{name:'飞鹤星飞帆1段',price:'¥268',img:'product-formula.png'},{name:'合生元派星1段',price:'¥298',img:'product-formula.png'},{name:'美赞臣蓝臻1段',price:'¥358',img:'product-formula.png'}]},
@@ -290,25 +291,17 @@ improve:{main:{name:'专注力训练游戏盒1-2岁',tags:['持续注意力','�
 }};
 
 let currentStage=0,currentWeek=0,currentCat=0;
-function getWeekKey(){return `s${currentStage+1}_${currentWeek}`}
+function getWeekKey(){return`s${currentStage+1}_${currentWeek}`}
 function getStageImg(){return DATA.stages[currentStage].img}
-
-function renderStageTabs(){
-  document.getElementById('stageTabs').innerHTML=DATA.stages.map((s,i)=>`<button class="stage-tab ${i===currentStage?'active':''}" onclick="selectStage(${i})">${s.label}</button>`).join('');
-}
-function renderWeekTabs(){
-  document.getElementById('weekTabs').innerHTML=DATA.stages[currentStage].weeks.map((w,i)=>`<button class="week-tab ${i===currentWeek?'active':''}" onclick="selectWeek(${i})">${w}</button>`).join('');
-}
+function renderStageTabs(){document.getElementById('stageTabs').innerHTML=DATA.stages.map((s,i)=>`<button class="stage-tab ${i===currentStage?'active':''}" onclick="selectStage(${i})">${s.label}</button>`).join('');}
+function renderWeekTabs(){document.getElementById('weekTabs').innerHTML=DATA.stages[currentStage].weeks.map((w,i)=>`<button class="week-tab ${i===currentWeek?'active':''}" onclick="selectWeek(${i})">${w}</button>`).join('');}
 function renderModule1(){
   const c=document.getElementById('module1'),d=DATA.weeks[getWeekKey()];
   if(!d){c.innerHTML='<p style="padding:20px;text-align:center;color:#999;">暂无数据</p>';return;}
   c.innerHTML=`
     <div class="baby-overview">
       <div class="overview-header">
-        <div class="overview-left">
-          <div class="overview-title">\u{1F31F} 宝宝在这周</div>
-          <div class="overview-desc">${d.overview}</div>
-        </div>
+        <div class="overview-left"><div class="overview-title">\u{1F31F} 宝宝在这周</div><div class="overview-desc">${d.overview}</div></div>
         <div class="overview-right"><img src="images/${getStageImg()}" alt="宝宝"/></div>
       </div>
       <div class="baby-stats">
@@ -318,26 +311,13 @@ function renderModule1(){
         <button class="record-btn" onclick="openRecord()">去记录</button>
       </div>
     </div>
-    <div class="baby-changes">
-      <div class="changes-title">\u{1F4CB} 本周关注重点</div>
+    <div class="baby-changes"><div class="changes-title">\u{1F4CB} 本周关注重点</div>
       <div class="changes-grid">
-        <div class="change-col traits-col">
-          <div class="change-col-title traits">\u{1F50D} 宝宝特点</div>
-          ${d.traits.map(t=>`<div class="change-item" onclick="jumpToCat('${d.focusCat}')">${t}</div>`).join('')}
-        </div>
-        <div class="change-col prepare-col">
-          <div class="change-col-title prepare">\u{1F6D2} 适合准备</div>
-          ${d.prepare.map(p=>`<div class="change-item" onclick="jumpToCatFromPrepare('${p}')">${p}</div>`).join('')}
-        </div>
+        <div class="change-col traits-col"><div class="change-col-title traits">\u{1F50D} 宝宝特点</div>${d.traits.map(t=>`<div class="change-item" onclick="jumpToCat('${d.focusCat}')">${t}</div>`).join('')}</div>
+        <div class="change-col prepare-col"><div class="change-col-title prepare">\u{1F6D2} 适合准备</div>${d.prepare.map(p=>`<div class="change-item" onclick="jumpToCatFromPrepare('${p}')">${p}</div>`).join('')}</div>
       </div>
     </div>
-    <div class="qa-bar">
-      <div class="qa-question">
-        <div class="qa-text">\u{1F4A1} ${d.question}</div>
-        <button class="qa-search" onclick="searchQuestion('${d.question}')">搜索</button>
-      </div>
-      <div class="qa-cert">${d.cert}</div>
-    </div>`;
+    <div class="qa-bar"><div class="qa-question"><div class="qa-text">\u{1F4A1} ${d.question}</div><button class="qa-search" onclick="searchQuestion()">搜索</button></div><div class="qa-cert">${d.cert}</div></div>`;
 }
 function renderModule2(){
   const c=document.getElementById('module2'),d=DATA.weeks[getWeekKey()];
@@ -345,10 +325,10 @@ function renderModule2(){
   const stageId=DATA.stages[currentStage].id,cats=DATA.catsPerStage[stageId];
   const focusIdx=cats.indexOf(d.focusCat);
   if(currentCat>=cats.length)currentCat=focusIdx>=0?focusIdx:0;
-  const activeCat=cats[currentCat],catData=d.products[activeCat];
+  const activeCat=cats[currentCat],catData=d.products[activeCat],cp=DATA.couponMap[activeCat],lr=DATA.liveRooms[activeCat];
   c.innerHTML=`
     <div class="module-2-title">\u{1F6CD}\uFE0F 为宝宝智选好物</div>
-    <div class="cat-tabs">${cats.map((cat,i)=>`<button class="cat-tab ${i===currentCat?'active':''} ${cat===d.focusCat?'focus':''}" onclick="selectCat(${i})" id="cat-${cat}">${DATA.catIcons[cat]} ${DATA.catLabels[cat]}</button>`).join('')}</div>
+    <div class="cat-tabs">${cats.map((cat,i)=>`<button class="cat-tab ${i===currentCat?'active':''} ${cat===d.focusCat?'focus':''}" onclick="selectCat(${i})">${DATA.catIcons[cat]} ${DATA.catLabels[cat]}</button>`).join('')}</div>
     ${catData?`
     <div class="ai-product-main">
       <div class="ai-badge">AI 智能推荐</div>
@@ -359,13 +339,20 @@ function renderModule2(){
           <div class="ai-tags">${catData.main.tags.map(t=>`<span class="ai-tag">${t}</span>`).join('')}</div>
           <div class="ai-product-price-row">
             <div class="ai-product-price">${catData.main.price}<span class="original">${catData.main.original}</span></div>
-            <div class="ai-btns">
-              ${catData.main.live?'<button class="btn-live" onclick="goLive()">直播间</button>':''}
-              <button class="btn-buy" onclick="goBuy()">购买</button>
-            </div>
+            <button class="btn-buy-main" onclick="goBuy()">现在购买</button>
           </div>
         </div>
       </div>
+      ${cp?`<div class="product-coupon"><span class="product-coupon-tag">券</span><span class="product-coupon-text">点淘专属 ${cp.condition}减¥${cp.amount}</span><button class="product-coupon-btn" onclick="claimCoupon()">领取</button></div>`:''}
+      ${catData.main.live&&lr?`
+      <div class="live-preview" onclick="goLive()">
+        <div class="live-avatar"><img src="images/ai-avatar.png" alt="主播"/></div>
+        <div class="live-info">
+          <div class="live-top"><span class="live-dot"></span><span class="live-label">LIVE</span><span class="live-title">${lr.title}</span></div>
+          <div class="live-viewers">${lr.host} \u00B7 ${lr.viewers}人正在看</div>
+        </div>
+        <button class="live-enter">进入直播间</button>
+      </div>`:''}
     </div>
     <div class="alt-products-title">其他优选</div>
     <div class="alt-products">${catData.alts.map(a=>`
@@ -373,28 +360,20 @@ function renderModule2(){
         <div class="alt-product-img"><img src="images/${a.img}" alt="${a.name}"/></div>
         <div class="alt-product-name">${a.name}</div>
         <div class="alt-product-price">${a.price}</div>
-        <button class="alt-product-btn" onclick="goBuy()">购买</button>
+        ${cp?`<div class="alt-coupon">领券减¥${cp.amount}</div>`:''}
+        <button class="alt-product-btn" onclick="goBuy()">现在购买</button>
       </div>`).join('')}</div>
-    <div class="coupon-section">
-      <div class="coupon-header"><div class="coupon-title">\u{1F3F7}\uFE0F 点淘专属优惠券</div><div class="coupon-more">更多 &gt;</div></div>
-      <div class="coupon-list">${DATA.coupons.map(cp=>`
-        <div class="coupon-item">
-          <div class="coupon-amount"><span>¥</span>${cp.amount}</div>
-          <div class="coupon-desc">${cp.desc} | ${cp.condition}</div>
-          <button class="coupon-claim">立即领取</button>
-        </div>`).join('')}</div>
-    </div>
     `:'<p style="padding:20px;text-align:center;color:#999;">该分类暂无推荐</p>'}`;
 }
-
 function selectStage(i){currentStage=i;currentWeek=0;currentCat=0;renderAll();}
 function selectWeek(i){currentWeek=i;const d=DATA.weeks[getWeekKey()];if(d){const cats=DATA.catsPerStage[DATA.stages[currentStage].id],fi=cats.indexOf(d.focusCat);currentCat=fi>=0?fi:0;}renderAll();}
 function selectCat(i){currentCat=i;renderModule2();}
 function jumpToCat(catId){const cats=DATA.catsPerStage[DATA.stages[currentStage].id],i=cats.indexOf(catId);if(i>=0){currentCat=i;renderModule2();document.getElementById('module2').scrollIntoView({behavior:'smooth'});}}
 function jumpToCatFromPrepare(t){const m={'奶':'eat','辅食':'eat','食':'eat','米粉':'eat','吃':'eat','尿':'use','牙':'use','玩具':'use','安全':'use','围栏':'use','衣':'clothes','鞋':'clothes','袜':'clothes','穿':'clothes','车':'travel','推车':'travel','外出':'travel','出':'travel','书':'learn','绘本':'learn','卡片':'learn','语':'learn','早教':'improve','积木':'improve','训练':'improve'};let tc=null;for(const[k,v]of Object.entries(m)){if(t.includes(k)){tc=v;break;}}if(tc)jumpToCat(tc);else jumpToCat(DATA.weeks[getWeekKey()].focusCat);}
-function searchQuestion(q){alert('正在为您搜索: '+q);}
+function searchQuestion(){alert('正在为您搜索...');}
 function goLive(){alert('正在跳转点淘直播间...');}
 function goBuy(){alert('正在跳转商品详情页...');}
+function claimCoupon(){alert('优惠券已领取！');}
 function openRecord(){document.getElementById('recordModal').classList.add('show');const d=DATA.weeks[getWeekKey()];if(d){document.getElementById('recWeight').value=d.stats.weight;document.getElementById('recHeight').value=d.stats.height;document.getElementById('recHead').value=d.stats.head;}}
 function closeRecord(){document.getElementById('recordModal').classList.remove('show');}
 function saveRecord(){const w=document.getElementById('recWeight').value,h=document.getElementById('recHeight').value,hd=document.getElementById('recHead').value;if(w&&h&&hd){alert('已保存: 体重'+w+'kg, 身高'+h+'cm, 头围'+hd+'cm');closeRecord();}else{alert('请填写完整数据');}}
